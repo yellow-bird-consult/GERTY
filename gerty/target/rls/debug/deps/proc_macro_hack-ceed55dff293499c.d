@@ -1,9 +1,0 @@
-/Users/maxwellflitton/Documents/github/GERTY/gerty/target/rls/debug/deps/libproc_macro_hack-ceed55dff293499c.dylib: /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/lib.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/quote.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/error.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/iter.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/parse.rs
-
-/Users/maxwellflitton/Documents/github/GERTY/gerty/target/rls/debug/deps/proc_macro_hack-ceed55dff293499c.d: /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/lib.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/quote.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/error.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/iter.rs /Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/parse.rs
-
-/Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/lib.rs:
-/Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/quote.rs:
-/Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/error.rs:
-/Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/iter.rs:
-/Users/maxwellflitton/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro-hack-0.5.19/src/parse.rs:
