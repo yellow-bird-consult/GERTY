@@ -30,6 +30,7 @@ fn write_patient_data_to_file(uuid: String, patient_data: &serde_json::Value) ->
 
 
 async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<String>>>>) -> Result<Response<Body>, Error> {
+    println!("getting request");
     let bytes = body::to_bytes(req.into_body()).await.unwrap();
     let string_body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
     let value: serde_json::Value = serde_json::from_str(&string_body.as_str()).unwrap();
@@ -111,8 +112,10 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
 
 #[tokio::main]
 async fn main() {
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    println!("starting server");
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     let db: Arc<Mutex<HashMap<String, Vec<String>>>> = Arc::new(Mutex::new(HashMap::new()));
+    println!("database is now initiated");
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_conn| {
         let db = db.clone();

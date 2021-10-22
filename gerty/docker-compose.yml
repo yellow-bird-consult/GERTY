@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+
+    patient_api_app:
+      container_name: gerty-server
+      image: "gerty-two"
+      restart: always
+      environment:
+        - APP_NAME=MyFlaskApp
+        - PRODUCTION=True
+      ports:
+        - "3000:3000"
+      expose:
+        - 3000
