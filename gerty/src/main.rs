@@ -62,9 +62,9 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
                         db.insert(disease, placeholder_vector);
                     }
 
-                    // work on returning JSON
+                    let raw_data = serde_json::to_vec(&patient).unwrap();
                     let builder = Response::builder().status(StatusCode::OK)
-                                                                               .body(Body::from(patient.to_string()));
+                                                                               .body(Body::from(raw_data));
                     println!("{:?}", db);
                     return builder
                 },

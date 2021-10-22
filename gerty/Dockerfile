@@ -1,0 +1,23 @@
+# FROM rust:1.55-alpine as builder
+FROM rust:1.55 as builder
+
+# RUN apt-get update -yqq && apt-get install -yqq cmake g++
+
+COPY ./src ./src
+COPY ./Cargo.toml ./Cargo.toml
+
+WORKDIR .
+
+RUN cargo build --release
+
+
+# FROM alpine
+FROM debian:buster-slim
+
+COPY --from=builder ./target/release/gerty . 
+RUN chmod +x ./gerty
+
+EXPOSE 3000
+
+CMD ["./gerty"]
+
