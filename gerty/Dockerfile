@@ -1,4 +1,3 @@
-# FROM rust:1.55-alpine as builder
 FROM rust:1.55 as builder
 
 # RUN apt-get update -yqq && apt-get install -yqq cmake g++
@@ -10,11 +9,10 @@ WORKDIR .
 
 RUN cargo build --release
 
-
-# FROM alpine
 FROM debian:buster-slim
 
-COPY --from=builder ./target/release/gerty . 
+COPY --from=builder ./target/release/gerty .
+COPY --from=builder ./clean_up.sh . 
 RUN chmod +x ./gerty
 
 EXPOSE 3000

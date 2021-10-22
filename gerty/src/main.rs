@@ -8,6 +8,7 @@ use serde_json;
 use hyper::body;
 use uuid::Uuid;
 use std::fs::File;
+use std::process::Command;
 
 
 fn extract_string_parameter<'a>(body_data: &'a serde_json::Value, key: &'a str) -> Result<&'a str, &'a str> {
@@ -30,7 +31,6 @@ fn write_patient_data_to_file(uuid: String, patient_data: &serde_json::Value) ->
 
 
 async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<String>>>>) -> Result<Response<Body>, Error> {
-    println!("getting request");
     let bytes = body::to_bytes(req.into_body()).await.unwrap();
     let string_body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
     let value: serde_json::Value = serde_json::from_str(&string_body.as_str()).unwrap();
@@ -66,12 +66,11 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
                     let raw_data = serde_json::to_vec(&patient).unwrap();
                     let builder = Response::builder().status(StatusCode::OK)
                                                                                .body(Body::from(raw_data));
-                    println!("{:?}", db);
                     return builder
                 },
                 None => {
                     let builder = Response::builder().status(StatusCode::NOT_FOUND)
-                                                                       .body(Body::from("disease was not found"));
+                                                                               .body(Body::from("disease was not found"));
                     return builder
                 }
             }
@@ -97,7 +96,6 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
                     write_patient_data_to_file(uuid, value.get("patient").unwrap());
                 }
             }
-            println!("{:?}", db);
             let builder = Response::builder().status(StatusCode::OK)
                                                     .body(Body::from("Patient inserted"));
             return builder
@@ -112,6 +110,13 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
 
 #[tokio::main]
 async fn main() {
+
+    println!("wiping old data files");
+    let _ = Command::new("sh")
+        .arg("./clean_up.sh")
+        .output()
+        .expect("Failed to execute command");
+
     println!("starting server");
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     let db: Arc<Mutex<HashMap<String, Vec<String>>>> = Arc::new(Mutex::new(HashMap::new()));
