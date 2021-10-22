@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use serde_json;
 use hyper::body;
 use uuid::Uuid;
+use std::fs::File;
 
 
 fn extract_string_parameter<'a>(body_data: &'a serde_json::Value, key: &'a str) -> Result<&'a str, &'a str> {
@@ -18,6 +19,13 @@ fn extract_string_parameter<'a>(body_data: &'a serde_json::Value, key: &'a str) 
             return Err("not found")
         }
     }
+}
+
+
+fn write_patient_data_to_file(uuid: String, patient_data: &serde_json::Value) -> () {
+    let path = format!("./{}.json", uuid);
+    let file = &File::create(path).unwrap();
+    serde_json::to_writer(file, patient_data).unwrap();
 }
 
 
@@ -33,16 +41,36 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
         "GET" => {
             match db.get(&disease) {
                 Some(data_vector) => {
-                    // get the value from redis
+                    if data_vector.len() == 0 {
+                        let builder = Response::builder().status(StatusCode::FAILED_DEPENDENCY)
+                                                                       .body(Body::from("disease is empty"));
+                        return builder
+                    }
+
+                    // get the value from JSON file
+                    let path = format!("./{}.json", data_vector[0]);
+                    let patient: serde_json::Value = serde_json::from_reader(File::open(&path).unwrap()).unwrap();
+
+                    std::fs::remove_file(path).unwrap();
+
+                    // remove patient from vector
+                    if data_vector.len() == 1 {
+                        let placeholder_vector = Vec::new();
+                        db.insert(disease, placeholder_vector);
+                    } else {
+                        let placeholder_vector = data_vector[1..].to_vec();
+                        db.insert(disease, placeholder_vector);
+                    }
 
                     // work on returning JSON
                     let builder = Response::builder().status(StatusCode::OK)
-                                                                               .body(Body::from("test"));
+                                                                               .body(Body::from(patient.to_string()));
+                    println!("{:?}", db);
                     return builder
                 },
                 None => {
                     let builder = Response::builder().status(StatusCode::NOT_FOUND)
-                                                                       .body(Body::from("test"));
+                                                                       .body(Body::from("disease was not found"));
                     return builder
                 }
             }
@@ -56,17 +84,18 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
                 Some(data_vector) => {
                     let mut placeholder_vector = data_vector.clone();
                     uuid = Uuid::new_v4().to_string();
-                    placeholder_vector.push(uuid);
+                    placeholder_vector.push(uuid.clone());
                     db.insert(disease, placeholder_vector);
+                    write_patient_data_to_file(uuid, value.get("patient").unwrap());
                 },
                 None => {
                     uuid = Uuid::new_v4().to_string();
                     let mut data_vector = Vec::new();
-                    data_vector.push(uuid);
+                    data_vector.push(uuid.clone());
                     db.insert(disease, data_vector);
+                    write_patient_data_to_file(uuid, value.get("patient").unwrap());
                 }
             }
-            // insert the patient into Redis
             println!("{:?}", db);
             let builder = Response::builder().status(StatusCode::OK)
                                                     .body(Body::from("Patient inserted"));
