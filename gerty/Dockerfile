@@ -3,6 +3,7 @@ FROM rust:1.55 as builder
 # RUN apt-get update -yqq && apt-get install -yqq cmake g++
 
 COPY ./src ./src
+COPY ./clean_up.sh ./clean_up.sh
 COPY ./Cargo.toml ./Cargo.toml
 
 WORKDIR .
