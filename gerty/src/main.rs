@@ -101,6 +101,17 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
                                                     .body(Body::from("Patient inserted"));
             return builder
         },
+        "COUNT" => {
+            let mut counter_hash = HashMap::new();
+
+            for (key, value) in &*db {
+                counter_hash.insert(key, value.iter().count() as i32);
+            }
+            let raw_data = serde_json::to_vec(&counter_hash).unwrap();
+            let builder = Response::builder().status(StatusCode::OK)
+                                                                               .body(Body::from(raw_data));
+            return builder
+        },
         _ => {
             let builder = Response::builder().status(StatusCode::NOT_ACCEPTABLE)
                                                                        .body(Body::from("Hello World"));
@@ -112,11 +123,11 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
 #[tokio::main]
 async fn main() {
 
-    println!("wiping old data files");
-    let _ = Command::new("sh")
-        .arg("./clean_up.sh")
-        .output()
-        .expect("Failed to execute command");
+    // println!("wiping old data files");
+    // let _ = Command::new("sh")
+    //     .arg("./clean_up.sh")
+    //     .output()
+    //     .expect("Failed to execute command");
 
     println!("starting server");
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
