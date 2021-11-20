@@ -31,15 +31,17 @@ fn write_patient_data_to_file(uuid: String, patient_data: &serde_json::Value) ->
 
 
 async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<String>>>>) -> Result<Response<Body>, Error> {
+    println!("getting request");
     let bytes = body::to_bytes(req.into_body()).await.unwrap();
     let string_body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
     let value: serde_json::Value = serde_json::from_str(&string_body.as_str()).unwrap();
 
-    let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
+    // let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
     let mut db = database.lock().unwrap();
 
     match extract_string_parameter(&value, "method").unwrap() {
         "GET" => {
+            let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
             match db.get(&disease) {
                 Some(data_vector) => {
                     if data_vector.len() == 0 {
@@ -76,6 +78,7 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
             }
         },
         "SET" => {
+            let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
             let uuid: String;
             // TODO extract the patient data and bytes for SQLite
 
@@ -100,6 +103,17 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
                                                     .body(Body::from("Patient inserted"));
             return builder
         },
+        "COUNT" => {
+            let mut counter_hash = HashMap::new();
+
+            for (key, value) in &*db {
+                counter_hash.insert(key, value.iter().count() as i32);
+            }
+            let raw_data = serde_json::to_vec(&counter_hash).unwrap();
+            let builder = Response::builder().status(StatusCode::OK)
+                                                                               .body(Body::from(raw_data));
+            return builder
+        },
         _ => {
             let builder = Response::builder().status(StatusCode::NOT_ACCEPTABLE)
                                                                        .body(Body::from("Hello World"));
@@ -111,11 +125,11 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
 #[tokio::main]
 async fn main() {
 
-    println!("wiping old data files");
-    let _ = Command::new("sh")
-        .arg("./clean_up.sh")
-        .output()
-        .expect("Failed to execute command");
+    // println!("wiping old data files");
+    // let _ = Command::new("sh")
+    //     .arg("./clean_up.sh")
+    //     .output()
+    //     .expect("Failed to execute command");
 
     println!("starting server");
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
