@@ -36,11 +36,12 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
     let string_body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
     let value: serde_json::Value = serde_json::from_str(&string_body.as_str()).unwrap();
 
-    let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
+    // let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
     let mut db = database.lock().unwrap();
 
     match extract_string_parameter(&value, "method").unwrap() {
         "GET" => {
+            let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
             match db.get(&disease) {
                 Some(data_vector) => {
                     if data_vector.len() == 0 {
@@ -77,6 +78,7 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
             }
         },
         "SET" => {
+            let disease = extract_string_parameter(&value, "disease").unwrap().to_string();
             let uuid: String;
             // TODO extract the patient data and bytes for SQLite
 
