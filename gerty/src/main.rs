@@ -132,7 +132,7 @@ async fn handle(req: Request<Body>, database: Arc<Mutex<HashMap<String, Vec<Stri
             wipe_disease(db, disease);
             let builder = Response::builder().status(StatusCode::OK).body(Body::from("disease wiped"));
             return builder
-        }
+        },
         _ => {
             let builder = Response::builder().status(StatusCode::NOT_ACCEPTABLE)
                                                                        .body(Body::from("Hello World"));
