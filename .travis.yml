@@ -6,13 +6,13 @@ script:
 after_success:
 - if [ "$TRAVIS_BRANCH" == "main" ]; then echo "building docker image"; fi
 - if [ "$TRAVIS_BRANCH" == "main" ]; then docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; fi
-- if [ "$TRAVIS_BRANCH" == "main" ]; then docker build ./gerty -t gerty; fi
+- if [ "$TRAVIS_BRANCH" == "main" ]; then docker build . -t gerty; fi
 - if [ "$TRAVIS_BRANCH" == "main" ]; then docker tag gerty:latest yellowbirdconsulting/gerty:live; fi
 - if [ "$TRAVIS_BRANCH" == "main" ]; then docker tag gerty:latest yellowbirdconsulting/gerty:live; fi
 - if [ "$TRAVIS_BRANCH" == "main" ]; then docker push yellowbirdconsulting/gerty:live; fi
 
 - if [ "$TRAVIS_BRANCH" == "development" ]; then echo "building docker image"; fi
 - if [ "$TRAVIS_BRANCH" == "development" ]; then docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; fi
-- if [ "$TRAVIS_BRANCH" == "development" ]; then docker build ./gerty -t gerty; fi
+- if [ "$TRAVIS_BRANCH" == "development" ]; then docker build . -t gerty; fi
 - if [ "$TRAVIS_BRANCH" == "development" ]; then docker tag gerty:latest yellowbirdconsulting/gerty:latest; fi
 - if [ "$TRAVIS_BRANCH" == "development" ]; then docker push yellowbirdconsulting/gerty:latest; fi

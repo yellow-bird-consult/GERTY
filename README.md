@@ -23,3 +23,12 @@ getting a patient from the database requires the following body:
     "disease": "some disease"
 }
 ```
+
+## Wiping a disease
+This wipes all the patients and their files associated with a disease with the following command:
+```
+{
+    "method": "WIPE".
+    "disease": "some disease"
+}
+```
